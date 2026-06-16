@@ -1,4 +1,3 @@
-```markdown
 # 🚗 Retrieval-Augmented Vehicle Diagnostic Assistant
 
 A context-aware chatbot that uses **Retrieval-Augmented Generation (RAG)** to help drivers understand dashboard warning messages — grounded in real car manual data rather than model hallucination.
@@ -11,9 +10,79 @@ Built as a proof of concept for integrating LLMs into vehicles, designed to hook
 
 Modern vehicles display dozens of warning messages that drivers may not recognise or understand. This project ingests pages from a real car manual (MG ZS compact SUV) and builds a RAG pipeline on top of an LLM so that when a driver asks *"What does the Gasoline Particulate Filter Full warning mean?"*, the assistant retrieves the relevant section of the manual and answers accurately — rather than guessing.
 
+**Research Questions:**
+- Can an LLM grounded in a real car manual answer warning message queries accurately?
+- How effectively does RAG prevent hallucinated or generic automotive advice?
+- Can the output quality support real-time, text-to-speech in-vehicle delivery?
+
 ---
 
-## How It Works
+## Dataset / Source Document
+
+| File | Type | Description |
+|---|---|---|
+| `mg-zs-warning-messages.html` | HTML | MG ZS car manual — warning messages section |
+
+- **Vehicle:** MG ZS Compact SUV
+- **Content:** Dashboard warning symbols, meanings, severity levels, and recommended driver actions
+- **No missing or incomplete entries** — full manual section used as-is
+
+---
+
+## Project Structure
+
+```
+├── notebook.ipynb                  # Main notebook — full RAG pipeline
+├── mg-zs-warning-messages.html     # Source document (car manual excerpt)
+├── images/
+│   └── dashboard.jpg               # Illustrative dashboard image
+└── README.md
+```
+
+---
+
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/<your-username>/rag-vehicle-diagnostic-assistant.git
+cd rag-vehicle-diagnostic-assistant
+
+# Install dependencies
+pip install \
+  langchain-core==0.3.72 \
+  langchain-openai==0.3.28 \
+  langchain-community==0.3.27 \
+  langchain-chroma==0.2.5 \
+  langchain-text-splitters==0.3.9 \
+  unstructured==0.18.11 \
+  pydantic==2.11.9
+```
+
+Then open the notebook:
+
+```bash
+jupyter notebook notebook.ipynb
+```
+
+---
+
+## Methodology
+
+### Document Ingestion
+- HTML manual loaded and parsed using `unstructured`
+- Cleaned and structured into processable text chunks
+
+### Chunking & Embedding
+- Text split using `langchain-text-splitters` with overlap to preserve context across chunk boundaries
+- Chunks embedded and stored in a **Chroma** vector store for semantic retrieval
+
+### Retrieval-Augmented Generation
+- On each user query, the top-k most relevant chunks are retrieved from the vector store
+- Retrieved context is injected into the LLM prompt alongside the user question
+- OpenAI LLM (via `langchain-openai`) generates a grounded, manual-backed response
+
+### Pipeline
 
 ```
 Car Manual (HTML)
@@ -34,87 +103,23 @@ Text Splitter  ──►  Chroma Vector Store
                  Grounded Natural Language Answer
 ```
 
-1. The HTML car manual is loaded and parsed using `unstructured`.
-2. The text is chunked with `langchain-text-splitters` and embedded into a **Chroma** vector store.
-3. On each query, relevant chunks are retrieved and passed as context to the LLM.
-4. The LLM (OpenAI, via `langchain-openai`) generates a grounded, accurate response.
-
----
-
-## Features
-
-- RAG pipeline built with **LangChain**
-- Vector storage with **ChromaDB**
-- Source document: MG ZS car manual warning messages (`mg-zs-warning-messages.html`)
-- Responses grounded in manual content — no hallucinated advice
-- Output designed to integrate with text-to-speech for in-vehicle delivery
-
----
-
-## Project Structure
-
-```
-├── notebook.ipynb                  # Main notebook — full RAG pipeline
-├── mg-zs-warning-messages.html     # Source document (car manual excerpt)
-├── images/
-│   └── dashboard.jpg               # Illustrative dashboard image
-└── README.md
-```
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Python 3.10+
-- An OpenAI API key
-
-### Installation
-
-```bash
-pip install \
-  langchain-core==0.3.72 \
-  langchain-openai==0.3.28 \
-  langchain-community==0.3.27 \
-  langchain-chroma==0.2.5 \
-  langchain-text-splitters==0.3.9 \
-  unstructured==0.18.11 \
-  pydantic==2.11.9
-```
-
-### Usage
-
-1. Clone the repository
-2. Set your OpenAI API key as an environment variable:
-```bash
-export OPENAI_API_KEY=your_key_here
-```
-3. Open and run `notebook.ipynb` cell by cell
-
 ---
 
 ## Example Query
 
 ```
 User:      What does the Gasoline Particulate Filter Full warning mean?
-Assistant: The Gasoline Particulate Filter Full warning indicates that the
-           gasoline particulate filter is full. You should consult an MG
-           Authorised Repairer as soon as possible for assistance.
-```
 
----
 
 ## Tech Stack
 
-| Component | Library |
+| Component | Library / Tool |
 |---|---|
-| LLM integration | `langchain-openai` |
+| LLM | OpenAI GPT (via `langchain-openai`) |
 | Orchestration | `langchain-core`, `langchain-community` |
-| Vector store | `langchain-chroma` (ChromaDB) |
-| Document parsing | `unstructured` |
-| Text splitting | `langchain-text-splitters` |
-| Data validation | `pydantic` |
-
----
-```
+| Vector Store | `langchain-chroma` (ChromaDB) |
+| Document Parsing | `unstructured` |
+| Text Splitting | `langchain-text-splitters` |
+| Data Validation | `pydantic` |
+| Notebook Environment | Jupyter Notebook |
+| Language | Python 3.10+ |

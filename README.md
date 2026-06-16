@@ -109,7 +109,12 @@ Text Splitter  ──►  Chroma Vector Store
 
 ```
 User:      What does the Gasoline Particulate Filter Full warning mean?
+Assistant: The Gasoline Particulate Filter Full warning indicates that the
+           gasoline particulate filter is full. You should consult an MG
+           Authorised Repairer as soon as possible for assistance.
+```
 
+---
 
 ## Tech Stack
 
@@ -123,3 +128,15 @@ User:      What does the Gasoline Particulate Filter Full warning mean?
 | Data Validation | `pydantic` |
 | Notebook Environment | Jupyter Notebook |
 | Language | Python 3.10+ |
+
+---
+
+## Features
+
+- RAG pipeline built with **LangChain**
+- Vector storage with **ChromaDB**
+- Source document: MG ZS car manual warning messages (`mg-zs-warning-messages.html`)
+- Responses grounded in manual content — no hallucinated advice
+- Output designed to integrate with text-to-speech for in-vehicle delivery
+
+---

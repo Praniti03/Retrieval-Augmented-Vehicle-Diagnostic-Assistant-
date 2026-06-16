@@ -117,4 +117,4 @@ Assistant: The Gasoline Particulate Filter Full warning indicates that the
 | Data validation | `pydantic` |
 
 ---
-Paste that into your GitHub README.md file and it will render perfectly. The triple backtick code blocks, headers, table, and bullet formatting will all display correctly in GitHub's markdown renderer.
+```
